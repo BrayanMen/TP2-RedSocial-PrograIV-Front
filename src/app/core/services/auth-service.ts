@@ -2,7 +2,6 @@ import { Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { IUser } from '../interfaces/user.interface';
 import {
-  BehaviorSubject,
   catchError,
   finalize,
   map,
@@ -12,14 +11,13 @@ import {
   throwError,
   timer,
 } from 'rxjs';
-import { Router } from '@angular/router';
 import { ILoginRequest } from '../interfaces/login-request.interface';
-import { IApiResponse } from '../interfaces/api-response-interface';
 import { IAuthResponse } from '../interfaces/auth.interface';
 import { IRegisterRequest } from '../interfaces/register-request.interface';
 import { ApiService } from './api-service';
 import { LoadingService } from './loading-service';
 import { ModalService } from './modal-service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',

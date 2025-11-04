@@ -9,7 +9,7 @@ export interface IUser {
   age: number;
   bio: string;
   profileImage?: string;
-  role: 'user' | 'admin';
+  role: UserRole;
   principalMartialArt?: string;
   principalMartialLevel?: string;
   principalBeltLevel?: string;
@@ -38,4 +38,9 @@ export interface ISocialLinks {
   youtube?: string;
   tiktok?: string;
   website?: string;
+}
+
+export enum UserRole {
+  USER = 'user',
+  ADMIN = 'admin',
 }

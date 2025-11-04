@@ -1,15 +1,16 @@
-import { Component, HostListener, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, effect, HostListener, inject,  signal } from '@angular/core';
 import { AuthService } from '../../../../core/services/auth-service';
+import { IUser } from '../../../../core/interfaces/user.interface';
+import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterLink,RouterLinkActive],
+  imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
-export class Navbar implements OnInit, OnDestroy {
+export class Navbar  {
   private authService = inject(AuthService);
   private router = inject(Router);
 
@@ -19,38 +20,18 @@ export class Navbar implements OnInit, OnDestroy {
   name = signal<string>('');
   email = signal<string>('');
 
-  private userSub?: Subscription;
-
-  ngOnInit(): void {
-    this.initUser();
-
-    this.userSub = this.authService.currentUser$.subscribe((user) => {
-      if (user) {
-        this.handlerUserData(user);
-      } else {
-        this.clearUserData();
+  constructor(){
+    effect(()=>{
+      const user = this.authService.currentUser()
+      if(user){
+        this.handlerUserData(user)
+      }else{
+        this.clearUserData()
       }
-    });
-  }
-  ngOnDestroy() {
-    this.userSub?.unsubscribe();
+    })
   }
 
-  private initUser() {
-    const userData = this.authService.getCurrentUser();
-    if (userData) {
-      this.handlerUserData(userData);
-    } else {
-      const userActual = this.authService.currentUser$.subscribe();
-      if (userActual) {
-        this.handlerUserData(userActual);
-      } else {
-        this.clearUserData();
-      }
-    }
-  }
-
-  private handlerUserData(user: any): void {
+  private handlerUserData(user: IUser): void {
     this.isLogin.set(true);
     this.name.set(user.firstName || user.username || '');
     this.email.set(user.email || '');
