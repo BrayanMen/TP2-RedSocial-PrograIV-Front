@@ -1,186 +1,183 @@
-import {  Injectable,  signal } from "@angular/core";
-import { environment } from "../../../environments/environment";
-import { IUser } from "../interfaces/user.interface";
-import { BehaviorSubject, catchError, Observable, tap, throwError, timer } from "rxjs";
-import { HttpClient } from "@angular/common/http";
-import { Router } from "@angular/router";
-import { TokenService } from "./token-service";
-import { ILoginRequest } from "../interfaces/login-request.interface";
-import { IApiResponse } from "../interfaces/api-response-interface";
-import { IAuthResponse } from "../interfaces/auth.interface";
-
+import { Injectable, signal } from '@angular/core';
+import { environment } from '../../../environments/environment';
+import { IUser } from '../interfaces/user.interface';
+import {
+  BehaviorSubject,
+  catchError,
+  finalize,
+  map,
+  Observable,
+  Subscription,
+  tap,
+  throwError,
+  timer,
+} from 'rxjs';
+import { Router } from '@angular/router';
+import { ILoginRequest } from '../interfaces/login-request.interface';
+import { IApiResponse } from '../interfaces/api-response-interface';
+import { IAuthResponse } from '../interfaces/auth.interface';
+import { IRegisterRequest } from '../interfaces/register-request.interface';
+import { ApiService } from './api-service';
+import { LoadingService } from './loading-service';
+import { ModalService } from './modal-service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-  private readonly apiUrl = `${environment.apiUrl}auth`;
-  
-  // Signals para estado reactivo (Angular 20)
+  private readonly authUrl = `auth/`;
+  private readonly userUrl = `users/`;
+
   currentUser = signal<IUser | null>(null);
   isAuthenticated = signal<boolean>(false);
-  isLoading = signal<boolean>(false);
-  
-  // Observable para compatibilidad
-  private currentUserSubject = new BehaviorSubject<IUser | null>(null);
-  public currentUser$ = this.currentUserSubject.asObservable();
 
-  private sessionTimer: any;
+  private sessionTimer?: Subscription;
 
   constructor(
-    private http: HttpClient,
     private router: Router,
-    private tokenService: TokenService,
+    private apiService: ApiService,
+    private loadingService: LoadingService,
+    private modalService: ModalService
   ) {
     this.checkAuth();
   }
 
-  login(credentials: ILoginRequest): Observable<IApiResponse<IAuthResponse>> {
-    this.isLoading.set(true);
-    
-    return this.http.post<IApiResponse<IAuthResponse>>(
-      `${this.apiUrl}/login`,
-      credentials,
-      { withCredentials: true }
-    ).pipe(
-      tap(response => {
-        this.handleAuthSuccess(response.data);
+  login(credentials: ILoginRequest): Observable<IAuthResponse> {
+    this.loadingService.show();
+
+    return this.apiService.post<IAuthResponse>(`${this.authUrl}login`, credentials).pipe(
+      map((res) => res.data),
+      tap((data) => {
+        this.handleAuthSuccess(data);
       }),
-      catchError(error => {
-        this.isLoading.set(false);
+      catchError((error) => {
         return throwError(() => error);
+      }),
+      finalize(() => {
+        this.loadingService.hide();
       })
     );
+  }
+
+  register(user: IRegisterRequest, profileImage: File | null): Observable<IAuthResponse> {
+    const formData = new FormData();
+
+    Object.entries(user).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, String(value));
+      }
+    });
+    
+    if (profileImage) {
+      formData.append('profileImage', profileImage, profileImage.name);
+    }
+
+    return this.apiService
+      .post<IAuthResponse>(`${this.authUrl}register`, formData)
+      .pipe(map((res) => res.data));
   }
 
   logout(): void {
-    this.http.post(`${this.apiUrl}/auth/logout`, {}, { withCredentials: true })
-      .subscribe({
-        complete: () => {
-          this.clearSession();
-          this.router.navigate(['/login']);
-        },
-        error: () => {
-          this.clearSession();
-          this.router.navigate(['/login']);
-        }
-      });
-  }
-
-  refreshToken(): Observable<IApiResponse<IAuthResponse>> {
-    return this.http.post<IApiResponse<IAuthResponse>>(
-      `${this.apiUrl}/auth/refresh`,
-      {},
-      { withCredentials: true }
-    ).pipe(
-      tap(response => {
-        if (response.data.token && response.data.refreshToken) {
-          this.tokenService.saveTokens(
-            response.data.token,
-            response.data.refreshToken,
-            response.data.expiresIn
-          );
-          this.startSessionTimer(response.data.expiresIn);
-        }
+    this.loadingService.show();
+    this.apiService.post(`${this.authUrl}logout`, {}).pipe(
+      finalize(() => {
+        this.loadingService.hide();
+        this.clearSessionAndRedirect();
       })
     );
   }
 
-  authorize(): Observable<any> {
-    const token = this.tokenService.getToken();
-    return this.http.post(
-      `${this.apiUrl}/authorize`,
-      {},
-      {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true
-      }
-    ).pipe(
-      tap((response: any) => {
-        if (response.valid && response.user) {
-          this.isAuthenticated.set(true);
-        }
-      }),
-      catchError(error => {
-        this.clearSession();
-        return throwError(() => error);
+  private clearSessionAndRedirect(): void {
+    this.clearSession();
+    this.router.navigate(['/login']);
+  }
+
+  refreshToken(): Observable<IAuthResponse> {
+    return this.apiService.post<IAuthResponse>(`${this.authUrl}refresh`, {}).pipe(
+      map((res) => res.data),
+      tap((data) => {
+        this.startSessionTimer(data.expiresIn);
       })
     );
   }
 
   private handleAuthSuccess(authResponse: IAuthResponse): void {
-    if (authResponse.token && authResponse.refreshToken && authResponse.user) {
-      this.tokenService.saveTokens(
-        authResponse.token,
-        authResponse.refreshToken,
-        authResponse.expiresIn
-      );
-
+    if (authResponse.token && authResponse.user) {
+      // No necesitamos, el navegador ya guardó la cookie
       this.currentUser.set(authResponse.user);
-      this.currentUserSubject.next(authResponse.user);
       this.isAuthenticated.set(true);
-      this.isLoading.set(false);
-
       this.startSessionTimer(authResponse.expiresIn);
       this.router.navigate(['/feed']);
     }
   }
 
-  private startSessionTimer(expiresIn: number): void {
+  private checkAuth(): void {
+    this.apiService
+      .get<IUser>(`${this.userUrl}profile`)
+      .pipe(map((res) => res.data))
+      .subscribe({
+        next: (user) => {
+          this.currentUser.set(user);
+          this.isAuthenticated.set(true);
+          this.startSessionTimer(15 * 60);
+        },
+        error: () => {
+          this.clearSession;
+        },
+      });
+  }
+
+  private startSessionTimer(expiresInSeconds: number): void {
     if (this.sessionTimer) {
       this.sessionTimer.unsubscribe();
     }
+    // El TP pide 10 minutos (600s)
+    const warningTimeMs = 10 * 60 * 1000;
+    // Asegurarnos de no poner un timer negativo si la expiración es menor
+    const expiresInMs = expiresInSeconds * 1000;
+    if (warningTimeMs > expiresInMs) {
+      console.warn('El tiempo de advertencia es mayor que el de expiración.');
+      return;
+    }
 
-    // 10 minutos antes de expirar, mostrar advertencia
-    const warningTime = (expiresIn - 300) * 1000; // 5 minutos antes
-    
-    this.sessionTimer = timer(warningTime).subscribe(() => {
-      this.showSessionWarning();
+    this.sessionTimer = timer(warningTimeMs).subscribe(() => {
+      // this.showSessionWarning();
+      console.log('El tiempo expiro');
     });
   }
 
-  private showSessionWarning(): void {
-    const shouldRefresh = confirm(
-      'Tu sesión está por expirar en 5 minutos. ¿Deseas extender tu sesión?'
-    );
-
-    if (shouldRefresh) {
-      this.refreshToken().subscribe({
-        next: () => console.log('Sesión extendida'),
-        error: () => this.logout()
-      });
-    }
-  }
-
-  private checkAuth(): void {
-    const token = this.tokenService.getToken();
-    
-    if (token && !this.tokenService.isTokenExpired()) {
-      this.authorize().subscribe({
-        next: (response: any) => {
-          if (response.user) {
-            this.currentUser.set(response.user);
-            this.currentUserSubject.next(response.user);
-            this.isAuthenticated.set(true);
-          }
-        },
-        error: () => {
-          this.clearSession();
-        }
-      });
-    } else {
-      this.clearSession();
-    }
-  }
+  // private showSessionWarning(): void {
+  //   this.modalService.show({
+  //     title: 'Sesión por Expirar',
+  //     message: 'Tu sesión expirará en 5 minutos. ¿Deseas extenderla?',
+  //     type: 'warning',
+  //     confirmText: 'Extender',
+  //     cancelText: 'Salir',
+  //     onConfirm: () => {
+  //       this.refreshToken().subscribe({
+  //         next: () => {
+  //           this.modalService.show({
+  //             title: '¡Sesión Extendida!',
+  //             message: 'Tu sesión ha sido renovada.',
+  //             type: 'success',
+  //           });
+  //         },
+  //         error: () => this.logout(),
+  //       });
+  //     },
+  //     onCancel: () => {
+  //       this.logout();
+  //     },
+  //   });
+  // }
 
   private clearSession(): void {
-    this.tokenService.removeTokens();
     this.currentUser.set(null);
-    this.currentUserSubject.next(null);
     this.isAuthenticated.set(false);
-    
+
     if (this.sessionTimer) {
       this.sessionTimer.unsubscribe();
+      this.sessionTimer = undefined;
     }
   }
 

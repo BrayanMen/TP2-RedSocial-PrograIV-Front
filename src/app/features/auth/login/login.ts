@@ -12,8 +12,8 @@ import { AuthService } from '../../../core/services/auth-service';
 })
 export class Login {
   loginForm: FormGroup;
-  showPassword = signal(false);
-  isLoading = signal(false);
+  showPassword = signal<boolean>(false);
+  isLoading = signal<boolean>(false);
   errorMessage = signal<string | null>(null);
   private returnUrl: string;
 
@@ -27,7 +27,14 @@ export class Login {
 
     this.loginForm = this.fb.group({
       emailOrUsername: ['', [Validators.required, Validators.minLength(4)]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.pattern(/^(?=.*[A-Z])(?=.*\d).+$/),
+        ],
+      ],
     });
   }
   togglePasswordVisibility(): void {

@@ -1,15 +1,26 @@
 <div
-  class="flex items-center h-full justify-center  bg-red-900/5 py-12 sm:px-6 lg:px-8 border-t-3 border-t-red-800"
+  class="flex items-center h-full justify-center bg-red-900/5 py-12 sm:px-6 lg:px-8 border-t-3 border-t-red-800"
 >
   <div class="relative max-w-md w-full">
-    <div class="text-center mb-8">
-      <h2 class="text-amber-400 text-5xl font-bold">OSS!</h2>
-      <h3 class="text-xl text-center border-l border-red-800 text-gray-200">
-        CONNECT. TRAIN. GROW
-      </h3>
+    <div class="flex flex-col text-center items-center mb-8 relative">
+      <img
+        src="https://res.cloudinary.com/drtikgxr8/image/upload/v1762241854/Adobe_Express_-_file_fpi0em.png"
+        alt="OssIsotipo"
+        class="h-72 absolute -top-27 -z-1"
+      />
+      <div
+        class="bg-gray-400/30 px-4 py-2 mask-l-from-70% mask-r-from-70% mask-t-from-60% mask-b-from-80%"
+      >
+        <h2 class="text-amber-400 text-5xl font-bold">OSS!</h2>
+        <h3 class="text-xl text-center border-l border-red-800 text-gray-200">
+          CONNECT. TRAIN. GROW
+        </h3>
+      </div>
     </div>
 
-    <div class="bg-white/10 backdrop-blur-xl rounded-b-4xl shadow-2xl shadow-amber-400/15 p-8 border border-red-800">
+    <div
+      class="bg-white/10 backdrop-blur-xl rounded-b-4xl shadow-2xl shadow-amber-400/15 p-8 border border-red-800"
+    >
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
         @if (errorMessage()) {
         <div
@@ -134,7 +145,7 @@
           <div class="flex items-center">
             <input
               id="remember-me"
-              type="checkbox"              
+              type="checkbox"
               class="h-4 w-4 rounded border-white/20 bg-white/5 text-red-600 focus:ring-amber-500 focus:ring-offset-0"
             />
             <label for="remember-me" class="ml-2 block text-sm text-gray-300"> Recordarme </label>
@@ -179,22 +190,11 @@
           }
         </button>
 
-        <!-- Divisor -->
-        <div class="relative my-6">
-          <div class="absolute inset-0 flex items-center">
-            <div class="w-full border-t border-white/20"></div>
-          </div>
-          <div class="relative flex justify-center text-sm">
-            <span class="px-2 bg-transparent text-gray-400">o</span>
-          </div>
-        </div>
-
-        <!-- Link a registro -->
         <p class="text-center text-sm text-gray-300">
           ¿No tienes una cuenta?
           <a
-            routerLink="/auth/register"
-            class="font-semibold text-purple-400 hover:text-purple-300 transition-colors ml-1"
+            routerLink="/register"
+            class="font-semibold text-amber-400 hover:text-amber-300 transition-colors ml-1"
           >
             Regístrate aquí
           </a>
@@ -202,7 +202,6 @@
       </form>
     </div>
 
-    <!-- Footer -->
     <p class="mt-8 text-center text-xs text-gray-400">
       Al iniciar sesión, aceptas nuestros
       <a href="#" class="underline hover:text-gray-300">Términos de servicio</a> y
