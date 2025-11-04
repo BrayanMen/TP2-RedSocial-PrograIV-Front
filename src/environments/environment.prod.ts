@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: '',
+  apiUrl: 'https://tp-2-red-social-progra-iv-back.vercel.app/',
 };
