@@ -1,22 +1,11 @@
-<main class="main">
-  <div class="content">
-    <div class="left-side">
-      
-      <h1>Hello, {{ title() }}</h1>
-      <h2 class="text-3xl font-bold underline">Hello world madafakao!</h2>
-      <p>Congratulations! Your app is running. 🎉</p>
+<div class="app-container min-h-screen flex">
+  <div class="grow flex flex-col">
+    <app-navbar class="flex justify-center" />
+    <div class="grow flex pt-6">
+      <app-sidebar class="w-64 shrink-0 z-1000"></app-sidebar>
+      <main class="main-content">
+        <router-outlet />
+      </main>
     </div>
-    <div class="divider" role="separator" aria-label="Divider"></div>
-    
   </div>
-</main>
-
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * The content above * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * * -->
-<!-- * * * * * * * * * * and can be replaced.  * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * End of Placeholder  * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-
-<router-outlet />
+</div>

@@ -1,0 +1,89 @@
+<aside
+  class="bg-zinc-700/30 p-4 flex flex-col h-full border-t-3 border-t-red-800 border-r border-gray-600 backdrop-blur-sm shadow-lg shadow-amber-300/25 z-1000"
+>
+  <div class="flex items-center space-x-3 p-6 mb-5 relative">
+    <div class="image-logo absolute -left-6"></div>
+    <div class="absolute right-6">
+      <div class="text-amber-400 text-2xl font-bold">OSS!</div>
+      <div class="text-xs border-l border-red-600 pl-1 text-gray-200">CONNECT. TRAIN. GROW</div>
+    </div>
+  </div>
+
+  <nav class="grow space-y-1">
+    <a
+      routerLink="/feed"
+      routerLinkActive="text-red-600 font-bold bg-white/40 rounded-full hover:text-red-400 hover:font-bold"
+      class="flex items-center w-fu space-x-3 p-3 rounded-br-xl hover:bg-red-700 hover:text-white transition-colors duration-300"
+    >
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+      </svg>
+      <span>Inicio</span>
+    </a>
+    <a
+      routerLink="/profile/me"
+      routerLinkActive="text-red-600 font-bold bg-white/40 rounded-full hover:text-red-400 hover:font-bold"
+      class="flex items-center space-x-3 p-3 rounded-br-xl hover:bg-red-700 hover:text-white transition-colors duration-300"
+    >
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path
+          d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+        />
+      </svg>
+      <span>Mi Perfil</span>
+    </a>
+    <!-- <a
+      routerLink="/messages"
+      routerLinkActive="bg-red-600 text-white font-semibold"
+      class="flex items-center space-x-3 p-3 rounded-lg hover:bg-red-700 transition-colors duration-200"
+    >
+      <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+        <path
+          d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"
+        />
+      </svg>
+      <span>Messages</span>
+    </a>
+    <a
+      routerLink="/settings"
+      routerLinkActive="bg-red-600 text-white font-semibold"
+      class="flex items-center space-x-3 p-3 rounded-lg hover:bg-red-700 transition-colors duration-200"
+    >
+      <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+        <path
+          d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.09-.7-1.71-.98L15 2H9c-.28 0-.5.22-.5.5s.22.5.5.5h6l-1 2.49c-.62.28-1.19.58-1.71.98l-2.49-1c-.22-.08-.49-.01-.61.22l-2 3.46c-.12.22-.07.49.12.64l2.11 1.65c-.04.32-.07.64-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.09.7 1.71.98L9 22H15c.28 0 .5-.22.5-.5s-.22-.5-.5-.5h-6l1-2.49c.62-.28 1.19-.58 1.71-.98l2.49 1c.22.08.49.01.61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"
+        />
+      </svg>
+      <span>Settings</span>
+    </a> -->
+    @if(isAdmin()){
+    <a
+      routerLink="/admin/dashboard"
+      routerLinkActive="text-red-600 font-bold bg-white/40 rounded-full hover:text-red-400 hover:font-bold"
+      class="flex items-center space-x-3 p-3 rounded-br-xl hover:bg-red-700 hover:text-white transition-colors duration-300"
+    >
+      <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+        <path
+          d="M17 11c.55 0 1-.45 1-1V5c0-.55-.45-1-1-1h-4c-.55 0-1 .45-1 1v5c0 .55.45 1 1 1h4zm-6 0c.55 0 1-.45 1-1V5c0-.55-.45-1-1-1H7c-.55 0-1 .45-1 1v5c0 .55.45 1 1 1h4zm-6 6c.55 0 1-.45 1-1v-5c0-.55-.45-1-1-1H1c-.55 0-1 .45-1 1v5c0 .55.45 1 1 1h4zm6 0c.55 0 1-.45 1-1v-5c0-.55-.45-1-1-1H7c-.55 0-1 .45-1 1v5c0 .55.45 1 1 1h4zm6 0c.55 0 1-.45 1-1v-5c0-.55-.45-1-1-1h-4c-.55 0-1 .45-1 1v5c0 .55.45 1 1 1h4z"
+        />
+      </svg>
+      <span>Admin Dashboard</span>
+    </a>
+
+    }
+  </nav>
+
+  <div
+    class="mt-auto p-4 bg-gray-600/30 rounded-xl flex flex-row gap-3 justify-center object-center items-center contain-layout"
+  >
+    <img
+      src="https://m.media-amazon.com/images/M/MV5BNzUxZmY0MGQtMzgwMi00Yzg3LTk2ZjctMjI1NjBmNjcwOTEwXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"
+      alt="User Profile"
+      class="w-14 h-14 rounded-full contain-content border-4 border-yellow-500"
+    />
+    <div class="flex flex-col">
+      <div class="font-semibold text-amber-400 text-md">LostEmperor_Fedor</div>
+      <div class="text-sm text-gray-300">El Ultimo Emperador | Sambo | Judo</div>
+    </div>
+  </div>
+</aside>
