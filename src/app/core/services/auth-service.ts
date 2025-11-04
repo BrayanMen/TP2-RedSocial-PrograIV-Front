@@ -1,16 +1,7 @@
-import { Injectable, signal } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { IUser } from '../interfaces/user.interface';
-import {
-  catchError,
-  finalize,
-  map,
-  Observable,
-  Subscription,
-  tap,
-  throwError,
-  timer,
-} from 'rxjs';
+import { catchError, finalize, map, Observable, Subscription, tap, throwError, timer } from 'rxjs';
 import { ILoginRequest } from '../interfaces/login-request.interface';
 import { IAuthResponse } from '../interfaces/auth.interface';
 import { IRegisterRequest } from '../interfaces/register-request.interface';
@@ -18,6 +9,7 @@ import { ApiService } from './api-service';
 import { LoadingService } from './loading-service';
 import { ModalService } from './modal-service';
 import { Router } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
@@ -35,9 +27,12 @@ export class AuthService {
     private router: Router,
     private apiService: ApiService,
     private loadingService: LoadingService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
-    this.checkAuth();
+    if (isPlatformBrowser(this.platformId)) {
+      this.checkAuth();
+    }
   }
 
   login(credentials: ILoginRequest): Observable<IAuthResponse> {
@@ -65,7 +60,7 @@ export class AuthService {
         formData.append(key, String(value));
       }
     });
-    
+
     if (profileImage) {
       formData.append('profileImage', profileImage, profileImage.name);
     }
