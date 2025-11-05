@@ -53,6 +53,7 @@ export class AuthService {
   }
 
   register(user: IRegisterRequest, profileImage: File | null): Observable<IAuthResponse> {
+    this.loadingService.show();
     const formData = new FormData();
 
     Object.entries(user).forEach(([key, value]) => {
@@ -65,9 +66,16 @@ export class AuthService {
       formData.append('profileImage', profileImage, profileImage.name);
     }
 
-    return this.apiService
-      .post<IAuthResponse>(`${this.authUrl}register`, formData)
-      .pipe(map((res) => res.data));
+    return this.apiService.post<IAuthResponse>(`${this.authUrl}register`, formData).pipe(
+      map((res) => res.data),
+      catchError((error) => {
+        const errorMessage = error?.error?.message || error.message || 'Error desconocido';
+        return throwError(() => new Error(errorMessage));
+      }),
+      finalize(() => {
+        this.loadingService.hide();
+      })
+    );
   }
 
   logout(): void {

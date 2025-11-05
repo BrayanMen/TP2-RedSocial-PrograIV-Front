@@ -31,6 +31,11 @@ export class Navbar  {
     })
   }
 
+  async logout(){
+   await this.authService.logout()
+   this.clearUserData()
+  }
+
   private handlerUserData(user: IUser): void {
     this.isLogin.set(true);
     this.name.set(user.firstName || user.username || '');
