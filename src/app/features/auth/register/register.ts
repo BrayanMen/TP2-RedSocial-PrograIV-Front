@@ -40,17 +40,14 @@ export class Register implements OnInit {
       }),
       paso2: this.fb.group(
         {
-          email:  new FormControl('', [Validators.required, Validators.email]),
+          email: new FormControl('', [Validators.required, Validators.email]),
           username: ['', [Validators.required, Validators.minLength(4)]],
-          password:  new FormControl(
-            '',
-            [
-              Validators.required,
-              Validators.minLength(8),
-              Validators.pattern(/^(?=.*[A-Z])(?=.*\d).+$/),
-            ],
-          ),
-          confirmPassword: new FormControl ('', [Validators.required]),
+          password: new FormControl('', [
+            Validators.required,
+            Validators.minLength(8),
+            Validators.pattern(/^(?=.*[A-Z])(?=.*\d).+$/),
+          ]),
+          confirmPassword: new FormControl('', [Validators.required]),
         },
         { validators: this.passwordMatch }
       ),
@@ -104,13 +101,40 @@ export class Register implements OnInit {
     }
   }
   onFileSelected(event: Event): void {
-    this.imageChangedEvent.set(event); // Pasa el evento al cropper
+    console.log('Archivo seleccionado:', event);
+    const input = event.target as HTMLInputElement;
+
+    if (input.files && input.files.length > 0) {
+      console.log('Archivo:', input.files[0]);
+      this.imageChangedEvent.set(event); // Pasa el evento al cropper
+
+      // Opcional: Mostrar vista previa temporal
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.previewUrl.set(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } // Pasa el evento al cropper
   }
 
   // 2. Se llama cada vez que el usuario mueve el recortador
   imageCropped(event: ImageCroppedEvent): void {
-    if (event.base64) {
-      this.croppedImage.set(event.base64); // Actualiza la imagen recortada (base64)
+    console.log('Evento de recorte recibido:', event);
+
+    // Manejar tanto blob como base64
+    if (event.blob) {
+      // Convertir blob a base64 para la vista previa
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.croppedImage.set(reader.result as string);
+      };
+      reader.readAsDataURL(event.blob);
+    } else if (event.base64) {
+      console.log('Imagen recortada: ', event.base64.length);
+      this.croppedImage.set(event.base64);
+    } else {
+      console.log('No funciona mierda!!');
     }
   }
 
@@ -120,15 +144,28 @@ export class Register implements OnInit {
     if (base64Data) {
       // Nombra el archivo
       const originalInput = this.imageChangedEvent()?.target as HTMLInputElement;
-      const originalFileName = originalInput.files?.[0]?.name || 'profile.png';
+      const originalFileName = originalInput?.files?.[0]?.name || 'profile.png';
+
+      // Extraer el nombre sin extensión
+      const fileNameWithoutExt = originalFileName.split('.').slice(0, -1).join('.') || 'profile';
 
       // Convierte el base64 a un archivo 'File'
-      const croppedFile = this.base64ToFile(base64Data, originalFileName);
+      try {
+        const croppedFile = this.base64ToFile(base64Data, `${fileNameWithoutExt}_cropped.png`);
 
-      this.selectedFile.set(croppedFile); // Guarda el archivo final
-      this.previewUrl.set(base64Data); // Pone la imagen recortada en la vista previa
-      this.imageChangedEvent.set(null); // Oculta el cropper
-      this.croppedImage.set(null);
+        this.selectedFile.set(croppedFile); // Guarda el archivo final
+        this.previewUrl.set(base64Data); // Pone la imagen recortada en la vista previa
+        this.imageChangedEvent.set(null); // Oculta el cropper
+        this.croppedImage.set(null);
+
+        console.log('Imagen recortada guardada:', croppedFile);
+      } catch (error) {
+        console.error('Error al guardar imagen recortada:', error);
+        this.errorMessage.set('Error al procesar la imagen');
+      }
+    } else {
+      console.error('No hay imagen recortada para guardar');
+      this.errorMessage.set('No hay imagen recortada para guardar');
     }
   }
 
