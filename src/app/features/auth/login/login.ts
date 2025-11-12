@@ -53,7 +53,7 @@ export class Login {
         },
         error: (error) => {
           this.isLoading.set(false);
-          this.errorMessage.set(error.message || 'Error al iniciar sesión');
+          this.errorMessage.set(error.error.error || 'Error al iniciar sesión');
 
           setTimeout(() => this.errorMessage.set(null), 5000);
         },

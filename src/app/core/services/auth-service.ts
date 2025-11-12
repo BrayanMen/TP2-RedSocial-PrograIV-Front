@@ -80,12 +80,18 @@ export class AuthService {
 
   logout(): void {
     this.loadingService.show();
-    this.apiService.post(`${this.authUrl}logout`, {}).pipe(
-      finalize(() => {
-        this.loadingService.hide();
-        this.clearSessionAndRedirect();
-      })
-    );
+
+    this.apiService
+      .post(`${this.authUrl}logout`, {})
+      .pipe(
+        tap(() => {
+          this.clearSessionAndRedirect();
+        }),
+        finalize(() => {
+          this.loadingService.hide();
+        })
+      )
+      .subscribe();
   }
 
   private clearSessionAndRedirect(): void {
@@ -112,21 +118,21 @@ export class AuthService {
     }
   }
 
-  private checkAuth(): void {
-    this.apiService
-      .get<IUser>(`${this.userUrl}profile`)
-      .pipe(map((res) => res.data))
-      .subscribe({
-        next: (user) => {
-          this.currentUser.set(user);
-          this.isAuthenticated.set(true);
-          this.startSessionTimer(15 * 60);
-        },
-        error: () => {
-          this.clearSession;
-        },
-      });
-  }
+ private checkAuth(): void {
+  this.apiService
+    .get<IUser>(`${this.userUrl}profile`)
+    .pipe(map((res) => res.data))
+    .subscribe({
+      next: (user) => {
+        this.currentUser.set(user);
+        this.isAuthenticated.set(true);
+        this.startSessionTimer(15 * 60);        
+      },
+      error: () => {
+        this.clearSession();       
+      },
+    });
+}
 
   private startSessionTimer(expiresInSeconds: number): void {
     if (this.sessionTimer) {

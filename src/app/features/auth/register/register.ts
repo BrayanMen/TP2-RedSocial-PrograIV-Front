@@ -101,14 +101,12 @@ export class Register implements OnInit {
     }
   }
   onFileSelected(event: Event): void {
-    console.log('Archivo seleccionado:', event);
+    
     const input = event.target as HTMLInputElement;
 
     if (input.files && input.files.length > 0) {
-      console.log('Archivo:', input.files[0]);
-      this.imageChangedEvent.set(event); // Pasa el evento al cropper
-
-      // Opcional: Mostrar vista previa temporal
+      
+      this.imageChangedEvent.set(event); 
       const file = input.files[0];
       const reader = new FileReader();
       reader.onload = () => {
@@ -214,7 +212,7 @@ export class Register implements OnInit {
           this.router.navigate(['/login']);
         },
         error: (error) => {
-          this.errorMessage.set(error.message || 'Error al registrar el usuario');
+          this.errorMessage.set(error.error.error || 'Error al registrar el usuario');
           setTimeout(() => this.errorMessage.set(null), 5000);
         },
       });

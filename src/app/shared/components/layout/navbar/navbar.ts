@@ -1,4 +1,4 @@
-import { Component, effect, HostListener, inject,  signal } from '@angular/core';
+import { Component, effect, HostListener, inject, signal } from '@angular/core';
 import { AuthService } from '../../../../core/services/auth-service';
 import { IUser } from '../../../../core/interfaces/user.interface';
 import { CommonModule } from '@angular/common';
@@ -10,7 +10,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
-export class Navbar  {
+export class Navbar {
   private authService = inject(AuthService);
   private router = inject(Router);
 
@@ -20,20 +20,20 @@ export class Navbar  {
   name = signal<string>('');
   email = signal<string>('');
 
-  constructor(){
-    effect(()=>{
-      const user = this.authService.currentUser()
-      if(user){
-        this.handlerUserData(user)
-      }else{
-        this.clearUserData()
+  constructor() {
+    effect(() => {
+      const user = this.authService.currentUser();
+      if (user) {
+        this.handlerUserData(user);
+      } else {
+        this.clearUserData();
       }
-    })
+    });
   }
 
-  async logout(){
-   await this.authService.logout()
-   this.clearUserData()
+  async logout() {
+    this.authService.logout();
+    this.clearUserData();
   }
 
   private handlerUserData(user: IUser): void {
