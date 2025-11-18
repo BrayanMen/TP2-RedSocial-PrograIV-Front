@@ -8,23 +8,26 @@ import { Modal } from './shared/components/modal/modal';
 import { Splash } from './shared/components/splash/splash';
 import { LoadingService } from './core/services/loading-service';
 import { AuthService } from './core/services/auth-service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
-  imports: [
-    CommonModule,
-    RouterOutlet,
-    Navbar,
-    Sidebar,
-  ],
+  imports: [CommonModule, RouterOutlet, Navbar, Sidebar, Modal, Splash, Loading],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
 export class App {
   protected readonly title = signal('social-network-tp2-front');
-  constructor(private authService: AuthService) {
-    // Verificar estado de autenticación al iniciar
+  showSplash = signal(true); // Controlamos la visibilidad con un Signal
+  isLoading!: Observable<boolean>;
+
+  constructor(private authService: AuthService, private loadService: LoadingService) {
+    this.isLoading = this.loadService.loading$;
     console.log('App iniciada - Estado autenticación:', this.authService.isAuthenticated());
     console.log('Usuario actual:', this.authService.currentUser());
+  }
+
+  handleSplashComplete() {
+    this.showSplash.set(false); // Destruimos el splash cuando termina GSAP
   }
 }

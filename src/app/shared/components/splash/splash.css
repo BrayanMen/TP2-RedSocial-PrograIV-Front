@@ -1,0 +1,8 @@
+.title-letter {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #fbbf24; /* amber-400 */
+  text-shadow: 0 0 18px rgba(255, 185, 50, 0.45);
+  display: inline-block;
+  opacity: 0;
+}

@@ -70,6 +70,8 @@ export class Feed implements OnInit {
       },
       error: (error: any) => {
         this.errorMessage.set(error.message || 'Error al cargar publicaciones');
+        console.log(error.error);
+        
         this.isLoading.set(false);
       },
     });

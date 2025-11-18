@@ -27,3 +27,16 @@ export class DataService {
     );
   }
 }
+
+// @Injectable({
+//   providedIn: 'root',
+// })
+// export class DataService {
+//   private apiUrl = environment.apiUrl;
+
+//   constructor(private http: HttpClient) {}
+
+//   getProfileOptions(): Observable<ProfileOptions> {
+//     return this.http.get<ProfileOptions>(`${this.apiUrl}/profile-options`);
+//   }
+// }

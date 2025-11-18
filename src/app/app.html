@@ -1,3 +1,9 @@
+@if (showSplash()) {
+  <app-splash (animationComplete)="handleSplashComplete()" />
+}
+@if (isLoading | async) {
+  <app-loading />
+}
 <div class="app-container min-h-screen flex">
   <div class="grow flex flex-col">
     <app-navbar class="flex justify-center" />
@@ -6,6 +12,7 @@
       <main class="main-content">
         <router-outlet />
       </main>
+      <app-modal/>
     </div>
   </div>
 </div>
