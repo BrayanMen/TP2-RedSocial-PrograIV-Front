@@ -33,7 +33,6 @@ export class Navbar {
 
   async logout() {
     this.authService.logout();
-    this.clearUserData();
   }
 
   private handlerUserData(user: IUser): void {

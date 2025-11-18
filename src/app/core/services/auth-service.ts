@@ -3,6 +3,7 @@ import { IUser } from '../interfaces/user.interface';
 import {
   catchError,
   finalize,
+  lastValueFrom,
   map,
   Observable,
   Subscription,
@@ -100,29 +101,19 @@ export class AuthService {
       'Cerrando sesión...',
       'Mantiene la sesión.'
     );
-    this.loadingService.show();
-
     if (!confirmLogout) {
-      this.loadingService.hide();
-      this.checkAuth();
       return;
     }
+    this.loadingService.show();
 
-    this.apiService
-      .post(`${this.authUrl}logout`, {})
-      .pipe(
-        tap(() => {
-          this.clearSessionAndRedirect();
-        }),
-        catchError((error) => {
-          this.clearSessionAndRedirect();
-          return throwError(() => error);
-        }),
-        finalize(() => {
-          this.loadingService.hide();
-        })
-      )
-      .subscribe();
+    try {
+      await lastValueFrom(this.apiService.post(`${this.authUrl}logout`, {}));
+    } catch (err) {
+      console.error('Error en logout backend', err);
+    } finally {
+      this.clearSessionAndRedirect(); // Esto actualiza el Signal -> El Navbar reacciona.
+      this.loadingService.hide();
+    }
   }
 
   updateProfile(user: IUser, profileImage: File | null): Observable<IUser> {
@@ -313,8 +304,7 @@ export class AuthService {
         titleMsj,
         () => {
           this.modalService.infoModal(infoTrue);
-          resolve(true); // Usuario confirmó
-          this.checkAuth();
+          resolve(true); // Usuario confirmó         
         },
         () => {
           this.modalService.infoModal(infoFalse);
