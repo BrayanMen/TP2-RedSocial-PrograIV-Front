@@ -3,7 +3,10 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth-service';
 import { environment } from '../../../environments/environment';
-import { catchError, switchMap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, filter, switchMap, take, throwError } from 'rxjs';
+
+let isRefreshing = false;
+const refreshTokenSubject = new BehaviorSubject<string | null>(null);
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
@@ -20,20 +23,35 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(reqWithCredentials).pipe(
     catchError((error) => {
       // Si el error es 401 y no estamos en la ruta de refresh
-      if (error.status === 401 && !req.url.includes('auth/refresh')) {
-        // Refrescamos el token
-        return authService.refreshToken().pipe(
-          switchMap(() => {
-            // Si el refreshToken funciona mandamos de nuevo la peticion inicial
-            return next(reqWithCredentials);
-          }),
-          catchError((refreshError) => {
-            // Si el refreshtoken falla o se vence hacemos el logout
-            authService.logout();
-            router.navigate(['/login']);
-            return throwError(() => refreshError);
-          })
-        );
+      if (error.status === 401 && !req.url.includes('auth/')) {
+        if (isRefreshing) {
+          // CASO B: Ya se está refrescando. Esperamos.
+          // CÓMO: Nos suscribimos al subject y esperamos a que tenga un valor (el nuevo token o señal de listo)
+          return refreshTokenSubject.pipe(
+            filter((token) => token !== null), // Esperar hasta que no sea null
+            take(1), // Tomar solo el primer valor y completarse
+            switchMap(() => next(reqWithCredentials)) // Reintentar la petición original
+          );
+        } else {
+          // CASO A: Somos los primeros. Iniciamos el refresco.
+          isRefreshing = true;
+          refreshTokenSubject.next(null); // Bloquear a los demás
+
+          return authService.refreshToken().pipe(
+            switchMap((response) => {
+              isRefreshing = false;
+              refreshTokenSubject.next('done'); // Desbloquear la cola
+              return next(reqWithCredentials); // Reintentar petición original
+            }),
+            catchError((refreshError) => {
+              // Si falla el refresh, game over.
+              isRefreshing = false;
+              authService.logout(); // Cierra sesión forzadamente
+              // router.navigate(['/login']);
+              return throwError(() => refreshError);
+            })
+          );
+        }
       }
       // Si es 401 se envia el error
       return throwError(() => error);
