@@ -212,7 +212,7 @@ export class Register implements OnInit {
           this.router.navigate(['/login']);
         },
         error: (error) => {
-          this.errorMessage.set(error.error.error || 'Error al registrar el usuario');
+          this.errorMessage.set(error || 'Error al registrar el usuario');
           setTimeout(() => this.errorMessage.set(null), 5000);
         },
       });

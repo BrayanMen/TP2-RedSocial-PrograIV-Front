@@ -54,8 +54,8 @@ export class AuthService {
         this.handleAuthSuccess(data);
       }),
       catchError((error) => {
-        const errorMessage =
-          error?.error?.message || error.message || 'Error en el inicio de sesión';
+        const errorMessage = error?.error.error || error.message || 'Error en el inicio de sesión';
+
         return throwError(() => new Error(errorMessage));
       }),
       finalize(() => {
@@ -84,7 +84,7 @@ export class AuthService {
         this.handleAuthSuccess(data);
       }),
       catchError((error) => {
-        const errorMessage = error?.error?.message || error.message || 'Error en el registro';
+        const errorMessage = error?.error?.error || error.message || 'Error en el registro';
         return throwError(() => new Error(errorMessage));
       }),
       finalize(() => {
