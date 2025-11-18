@@ -47,7 +47,6 @@ export class AuthService {
 
   login(credentials: ILoginRequest): Observable<IAuthResponse> {
     this.loadingService.show();
-    
 
     return this.apiService.post<IAuthResponse>(`${this.authUrl}login`, credentials).pipe(
       map((res) => res.data),
@@ -95,14 +94,13 @@ export class AuthService {
   }
 
   async logout(): Promise<void> {
-    this.loadingService.show();
-
     const confirmLogout = await this.onModalConfirm(
       '¿Seguro quieres cerrar sesion?',
       'Cerrar Sesión',
       'Cerrando sesión...',
       'Mantiene la sesión.'
     );
+    this.loadingService.show();
 
     if (!confirmLogout) {
       this.loadingService.hide();
@@ -141,13 +139,15 @@ export class AuthService {
       formData.append('profileImage', profileImage, profileImage.name);
     }
 
-    return this.apiService.put<IUser>(`${this.userUrl}profile`, formData).pipe( //Chequear ruta
+    return this.apiService.put<IUser>(`${this.userUrl}profile`, formData).pipe(
+      //Chequear ruta
       map((res) => res.data),
       tap((data) => {
         this.currentUser.set(data);
       }),
       catchError((error) => {
-        const errorMessage = error?.error?.message || error.message || 'Error al actualizar el perfil';
+        const errorMessage =
+          error?.error?.message || error.message || 'Error al actualizar el perfil';
         return throwError(() => new Error(errorMessage));
       }),
       finalize(() => {
