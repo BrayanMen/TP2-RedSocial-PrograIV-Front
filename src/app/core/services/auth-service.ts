@@ -3,6 +3,7 @@ import { IUser } from '../interfaces/user.interface';
 import {
   catchError,
   finalize,
+  firstValueFrom,
   lastValueFrom,
   map,
   Observable,
@@ -31,6 +32,8 @@ export class AuthService {
   currentUser = signal<IUser | null>(null);
   isAuthenticated = signal<boolean>(false);
 
+  private authCheckCompleted = signal<boolean>(false);
+
   private sessionTimer?: Subscription;
   private refreshModalShow = false;
 
@@ -42,8 +45,41 @@ export class AuthService {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     if (isPlatformBrowser(this.platformId)) {
-      this.checkAuth();
+      this.initializeAuth();
+      console.log(this.checkAuth())
     }
+  }
+
+  private async initializeAuth(): Promise<void> {
+    try {
+      await this.checkAuth();
+    } catch (error) {
+      console.error('Error al verificar autenticación inicial:', error);
+    } finally {
+      this.authCheckCompleted.set(true);
+    }
+  }
+
+  async waitForAuthCheck(): Promise<void> {
+    if (this.authCheckCompleted()) {
+      return Promise.resolve();
+    }
+
+    // Esperar hasta que authCheckCompleted sea true
+    return new Promise<void>((resolve) => {
+      const checkInterval = setInterval(() => {
+        if (this.authCheckCompleted()) {
+          clearInterval(checkInterval);
+          resolve();
+        }
+      }, 50);
+
+      // Timeout de seguridad (1 segundos)
+      setTimeout(() => {
+        clearInterval(checkInterval);
+        resolve();
+      }, 1000);
+    });
   }
 
   login(credentials: ILoginRequest): Observable<IAuthResponse> {
@@ -195,28 +231,27 @@ export class AuthService {
     }
   }
 
-  private checkAuth(): void {
-    this.apiService
-      .get<IUser>(`${this.userUrl}profile`)
-      .pipe(
-        take(1),
-        map((res) => res.data),
-        catchError((error) => {
-          this.clearSession();
-          return throwError(() => error);
-        })
-      )
-      .subscribe({
-        next: (user) => {
-          this.currentUser.set(user);
-          this.isAuthenticated.set(true);
-          this.startSessionTimer(15 * 60);
-        },
-        error: () => {
-          this.clearSession();
-        },
-      });
+  private async checkAuth(): Promise<void> {
+    try {
+      const response = await firstValueFrom(
+        this.apiService.get<IUser>(`${this.userUrl}profile`).pipe(
+          map((res) => res.data),
+          catchError((error) => {
+            this.clearSession();
+            throw error;
+          })
+        )
+      );
+
+      this.currentUser.set(response);
+      this.isAuthenticated.set(true);
+      this.startSessionTimer(15 * 60);
+    } catch (error) {
+      this.clearSession();
+      throw error;
+    }
   }
+  
 
   private showRefreshTokenModal(): void {
     if (this.refreshModalShow) return;

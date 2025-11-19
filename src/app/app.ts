@@ -21,7 +21,7 @@ export class App {
   showSplash = signal(true); // Controlamos la visibilidad con un Signal
   isLoading!: Observable<boolean>;
 
-  constructor(private authService: AuthService, private loadService: LoadingService) {
+  constructor(private authService: AuthService, private loadService: LoadingService) {  
     this.isLoading = this.loadService.loading$;
     console.log('App iniciada - Estado autenticación:', this.authService.isAuthenticated());
     console.log('Usuario actual:', this.authService.currentUser());

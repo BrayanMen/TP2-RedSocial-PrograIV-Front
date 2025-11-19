@@ -48,8 +48,7 @@ export class Login {
 
       this.authService.login(this.loginForm.value).subscribe({
         next: () => {
-          this.router.navigate([this.returnUrl]);
-          console.log(this.authService.getCurrentUser());
+          this.router.navigate([this.returnUrl]);         
         },
         error: (error) => {
           this.isLoading.set(false);

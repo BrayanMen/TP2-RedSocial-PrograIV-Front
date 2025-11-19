@@ -7,6 +7,7 @@ import { BehaviorSubject, catchError, filter, switchMap, take, throwError } from
 
 let isRefreshing = false;
 const refreshTokenSubject = new BehaviorSubject<string | null>(null);
+const authUrl = 'auth/';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
@@ -22,8 +23,13 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   });
   return next(reqWithCredentials).pipe(
     catchError((error) => {
+      const isAuthRoute =
+        req.url.includes(`${authUrl}login`) ||
+        req.url.includes(`${authUrl}register`) ||
+        req.url.includes(`${authUrl}refresh`) ||
+        req.url.includes(`${authUrl}logout`);
       // Si el error es 401 y no estamos en la ruta de refresh
-      if (error.status === 401 && !req.url.includes('auth/')) {
+      if (error.status === 401 && !isAuthRoute) {
         if (isRefreshing) {
           // CASO B: Ya se está refrescando. Esperamos.
           // CÓMO: Nos suscribimos al subject y esperamos a que tenga un valor (el nuevo token o señal de listo)
