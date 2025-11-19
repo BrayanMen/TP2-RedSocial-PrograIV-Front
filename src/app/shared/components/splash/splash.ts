@@ -5,9 +5,11 @@ import {
   Output,
   ViewChild,
   AfterViewInit,
+  Inject,
+  PLATFORM_ID,
 } from '@angular/core';
 
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import gsap from 'gsap';
 import { CSSPlugin } from 'gsap/CSSPlugin';
 
@@ -28,7 +30,12 @@ export class Splash implements AfterViewInit {
   @ViewChild('textContainer', { static: true }) textContainer!: ElementRef;
   @ViewChild('sloganContainer', { static: true }) sloganContainer!: ElementRef;
 
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+
   ngAfterViewInit(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     gsap.set(this.splashContainer.nativeElement, { opacity: 1, y: 0 });
     gsap.set(this.logoContainer.nativeElement, { opacity: 0, scale: 0.7 });
     gsap.set(this.textContainer.nativeElement.querySelectorAll('.title-letter'), { opacity: 0 });
