@@ -24,7 +24,7 @@ export const routes: Routes = [
     path: 'profile',
     loadComponent: () => import('./features/users/profile/profile').then((p) => p.Profile),
     canActivate: [authGuard],
-  // },
+  },
   // {
   //   path: 'posts/:id',
   //   loadComponent: () =>
@@ -49,4 +49,5 @@ export const routes: Routes = [
     ],
   },
 ];
+
 
