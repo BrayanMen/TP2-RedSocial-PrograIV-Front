@@ -1,4 +1,4 @@
-import { Component, effect, HostListener, inject, signal } from '@angular/core';
+import { Component, computed, effect, HostListener, inject, signal } from '@angular/core';
 import { AuthService } from '../../../../core/services/auth-service';
 import { IUser } from '../../../../core/interfaces/user.interface';
 import { CommonModule } from '@angular/common';
@@ -19,6 +19,7 @@ export class Navbar {
   showDropDown = signal<boolean>(false);
   name = signal<string>('');
   email = signal<string>('');
+  isAdmin = computed(()=> this.authService.isAdmin())
 
   constructor() {
     effect(() => {

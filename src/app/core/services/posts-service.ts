@@ -24,7 +24,9 @@ export class PostsService {
       .set('limit', limit.toString())
       .set('sortBy', sortBy);
 
-    if (userId) params = params.set('userId', userId);
+    if (userId) {
+      params = params.set('userId', userId);
+    }
 
     return this.apiService.get<IPostsResponse>(this.postsUrl, params).pipe(map((r) => r.data));
   }

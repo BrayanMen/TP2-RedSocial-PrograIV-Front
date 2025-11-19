@@ -32,6 +32,21 @@
             </svg>
           </a>
         </li>
+        @if(isAdmin()){
+        <li>
+          <a
+            routerLink="/admin/dashboard"
+            routerLinkActive="text-red-600 font-bold bg-white/80 rounded-full hover:text-red-400 hover:font-bold"
+            class="flex items-center space-x-1 text-shadow-lg hover:text-amber-300 hover:font-semibold transition-all duration-300 ease-in px-4 py-2"
+          >
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M17 11c.55 0 1-.45 1-1V5c0-.55-.45-1-1-1h-4c-.55 0-1 .45-1 1v5c0 .55.45 1 1 1h4zm-6 0c.55 0 1-.45 1-1V5c0-.55-.45-1-1-1H7c-.55 0-1 .45-1 1v5c0 .55.45 1 1 1h4zm-6 6c.55 0 1-.45 1-1v-5c0-.55-.45-1-1-1H1c-.55 0-1 .45-1 1v5c0 .55.45 1 1 1h4zm6 0c.55 0 1-.45 1-1v-5c0-.55-.45-1-1-1H7c-.55 0-1 .45-1 1v5c0 .55.45 1 1 1h4zm6 0c.55 0 1-.45 1-1v-5c0-.55-.45-1-1-1h-4c-.55 0-1 .45-1 1v5c0 .55.45 1 1 1h4z"
+              />
+            </svg>
+          </a>
+        </li>
+        }
       </ul>
     </div>
     <!-- <button class="menu-btn" (click)="openMenu()" aria-label="Menu Hamburguesa">
@@ -46,25 +61,50 @@
     >
       <button
         (click)="navigateRoute('/login')"
-        class="rounded-l-full border-2 py-3 px-6 border-gray-600 bg-gray-400/30 transform hover:scale-95 transition-all duration-100 ease-in"
+        class="rounded-l-full border-2 py-3 px-6 border-gray-600 bg-gray-400/30 transform hover:scale-95 transition-all duration-100 ease-in flex gap-1 items-center"
       >
-        Ingresar
+        <span class="max-md:hidden"> Ingresar </span>
+        <svg class="w-6 h-6 font-bold md:hidden" fill="currentColor" viewBox="0 0 24 24">
+          <path
+            fill-rule="evenodd"
+            d="M16.5 3.75a1.5 1.5 0 0 1 1.5 1.5v13.5a1.5 1.5 0 0 1-1.5 1.5h-6a1.5 1.5 0 0 1-1.5-1.5V15a.75.75 0 0 0-1.5 0v3.75a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V5.25a3 3 0 0 0-3-3h-6a3 3 0 0 0-3 3V9A.75.75 0 1 0 9 9V5.25a1.5 1.5 0 0 1 1.5-1.5h6Zm-5.03 4.72a.75.75 0 0 0 0 1.06l1.72 1.72H2.25a.75.75 0 0 0 0 1.5h10.94l-1.72 1.72a.75.75 0 1 0 1.06 1.06l3-3a.75.75 0 0 0 0-1.06l-3-3a.75.75 0 0 0-1.06 0Z"
+            clip-rule="evenodd"
+          />
+        </svg>
       </button>
       <button
         (click)="navigateRoute('/register')"
-        class="rounded-r-full py-3 px-6 border border-amber-600 bg-amber-400/30 transform hover:scale-95 transition-all duration-100 ease-in"
+        class="rounded-r-full py-3 px-6 border border-amber-600 bg-amber-400/30 transform hover:scale-95 transition-all duration-100 ease-in flex gap-1 items-center"
       >
-        Registro
+        <span class="max-md:hidden">Registrar</span>
+        <svg class="w-6 h-6 font-bold md:hidden" fill="currentColor" viewBox="0 0 24 24">
+          <path
+            fill-rule="evenodd"
+            d="M7.502 6h7.128A3.375 3.375 0 0 1 18 9.375v9.375a3 3 0 0 0 3-3V6.108c0-1.505-1.125-2.811-2.664-2.94a48.972 48.972 0 0 0-.673-.05A3 3 0 0 0 15 1.5h-1.5a3 3 0 0 0-2.663 1.618c-.225.015-.45.032-.673.05C8.662 3.295 7.554 4.542 7.502 6ZM13.5 3A1.5 1.5 0 0 0 12 4.5h4.5A1.5 1.5 0 0 0 15 3h-1.5Z"
+            clip-rule="evenodd"
+          />
+          <path
+            fill-rule="evenodd"
+            d="M3 9.375C3 8.339 3.84 7.5 4.875 7.5h9.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 0 1 3 20.625V9.375ZM6 12a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H6.75a.75.75 0 0 1-.75-.75V12Zm2.25 0a.75.75 0 0 1 .75-.75h3.75a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75ZM6 15a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H6.75a.75.75 0 0 1-.75-.75V15Zm2.25 0a.75.75 0 0 1 .75-.75h3.75a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75ZM6 18a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H6.75a.75.75 0 0 1-.75-.75V18Zm2.25 0a.75.75 0 0 1 .75-.75h3.75a.75.75 0 0 1 0 1.5H9a.75.75 0 0 1-.75-.75Z"
+            clip-rule="evenodd"
+          />
+        </svg>
       </button>
     </div>
     }@else{
-    <div class="flex flex-col items-center gap-2">
-      <span class="text-white">Hola, {{ name() }}</span>
+    <div class="flex items-center gap-2">
+      <span class="text-white max-md:hidden">Hola, {{ name() }}</span>
       <button
-        class="py-2 px-3 border border-red-800 rounded-full bg-red-800/30 hover:bg-red-500/30 backdrop-blur-sm"
+        class="py-2 px-2 border-2 text-red-600 font-bold bg-white/80 hover:border-red-800 rounded-full hover:bg-red-800/30 backdrop-blur-sm"
         (click)="logout()"
       >
-        Cerrar Sesion
+        <svg class="w-6 h-6 font-bold" fill="currentColor" viewBox="0 0 24 24">
+          <path
+            fillRule="evenodd"
+            d="M12 2.25a.75.75 0 0 1 .75.75v9a.75.75 0 0 1-1.5 0V3a.75.75 0 0 1 .75-.75ZM6.166 5.106a.75.75 0 0 1 0 1.06 8.25 8.25 0 1 0 11.668 0 .75.75 0 1 1 1.06-1.06c3.808 3.807 3.808 9.98 0 13.788-3.807 3.808-9.98 3.808-13.788 0-3.808-3.807-3.808-9.98 0-13.788a.75.75 0 0 1 1.06 0Z"
+            clipRule="evenodd"
+          />
+        </svg>
       </button>
     </div>
     }
