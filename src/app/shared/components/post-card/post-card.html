@@ -20,7 +20,7 @@
     </div>
 
     <div class="flex items-center space-x-2">
-      <span class="text-xs text-gray-400">{{ getTimeAgo(post.createdAt) }}</span>
+      <span class="text-xs text-gray-400">{{ post.createdAt | timeAgo }}</span>
       @if (canDelete()) {
       <button
         (click)="onDelete()"
@@ -43,7 +43,7 @@
   <!-- Content -->
   <div class="mb-4">
     <h2 class="text-xl font-bold text-white mb-2">{{ post.title }}</h2>
-    <p class="text-gray-300 whitespace-pre-line">{{ post.content }}</p>
+    <p class="text-gray-300 whitespace-pre-line">{{ post.content | cutLongText : 50 : true }}</p>
   </div>
 
   <!-- Image -->

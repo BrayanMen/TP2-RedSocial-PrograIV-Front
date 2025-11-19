@@ -2,10 +2,12 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { IPost } from '../../../core/interfaces/post.interface';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
+import { CutLongTextPipe } from '../../pipes/cut-long-text.pipe';
 
 @Component({
   selector: 'app-post-card',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TimeAgoPipe, CutLongTextPipe],
   templateUrl: './post-card.html',
   styleUrl: './post-card.css',
 })
