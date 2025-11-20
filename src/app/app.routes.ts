@@ -25,11 +25,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/users/profile/profile').then((p) => p.Profile),
     canActivate: [authGuard],
   },
-  {
-    path: 'posts/:id',
-    loadComponent: () =>
-      import('./features/home/post-detail/post-detail').then((p) => p.PostDetail),
-  },
+  // {
+  //   path: 'posts/:id',
+  //   loadComponent: () =>
+  //     import('./features/home/post-detail/post-detail').then((p) => p.PostDetail),
+  // },
   {
     path: 'admin',
     canActivate: [authGuard, adminGuard],
@@ -49,3 +49,5 @@ export const routes: Routes = [
     ],
   },
 ];
+
+
