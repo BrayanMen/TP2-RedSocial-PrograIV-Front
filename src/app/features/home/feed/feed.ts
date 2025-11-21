@@ -12,6 +12,9 @@ import { PostsService } from '../../../core/services/posts-service';
 import { AuthService } from '../../../core/services/auth-service';
 import { LoadingService } from '../../../core/services/loading-service';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { CommentsService } from '../../../core/services/comments-service';
+import { IComment } from '../../../core/interfaces/comment.interface';
 
 @Component({
   selector: 'app-feed',
@@ -31,11 +34,11 @@ export class Feed implements OnInit {
   totalPages = signal<number>(1);
   sortBy = signal<SortBy>(SortBy.DATE);
   readonly SortBy = SortBy;
-  showCreateModal = signal<boolean>(false);
-
+  
   currentUserId = signal<string | undefined>(undefined);
   isAdmin = signal<boolean>(false);
-
+  
+  showCreateModal = signal<boolean>(false);
   newPostTitle = signal<string>('');
   newPostContent = signal<string>('');
   newPostType = signal<PostType>(PostType.GENERAL);
@@ -54,8 +57,8 @@ export class Feed implements OnInit {
   }
 
   onSortChange(): void {
-    this.currentPage.set(1); 
-    this.loadPosts(); 
+    this.currentPage.set(1);
+    this.loadPosts();
   }
 
   loadPosts(): void {
@@ -69,9 +72,7 @@ export class Feed implements OnInit {
         this.isLoading.set(false);
       },
       error: (error: any) => {
-        this.errorMessage.set(error.message || 'Error al cargar publicaciones');
-        console.log(error.error);
-        
+        this.errorMessage.set(error.message || 'Error al cargar publicaciones'); 
         this.isLoading.set(false);
       },
     });
@@ -235,8 +236,5 @@ export class Feed implements OnInit {
       },
     });
   }
-
-  handleViewComments(postId: string): void {
-    console.log('Ver comentarios de:', postId);
-  }
+  
 }

@@ -110,7 +110,5 @@ export class Profile {
     });
   }
 
-  handleViewComments(postId: string): void {
-    this.router.navigate(['/posts', postId]);
-  }
+
 }

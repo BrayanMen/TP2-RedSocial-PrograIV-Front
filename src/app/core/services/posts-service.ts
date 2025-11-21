@@ -31,6 +31,10 @@ export class PostsService {
     return this.apiService.get<IPostsResponse>(this.postsUrl, params).pipe(map((r) => r.data));
   }
 
+  getPostById(id: string): Observable<IPost> {
+    return this.apiService.get<IPost>(`${this.postsUrl}${id}`).pipe(map((r) => r.data));
+  }
+
   createPost(post: ICreatePostRequest, image?: File | null): Observable<IPost> {
     const formData = new FormData();
     formData.append('title', post.title);

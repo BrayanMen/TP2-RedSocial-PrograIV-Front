@@ -23,7 +23,7 @@
       <span class="text-xs text-gray-400">{{ post.createdAt | timeAgo }}</span>
       @if (canDelete()) {
       <button
-        (click)="onDelete()"
+        (click)="onDelete($event)"
         class="text-red-400 hover:text-red-300 transition-colors p-2 rounded-full hover:bg-red-500/20"
         title="Eliminar publicación"
       >
@@ -41,15 +41,17 @@
   </div>
 
   <!-- Content -->
-  <div class="mb-4">
-    <h2 class="text-xl font-bold text-white mb-2">{{ post.title }}</h2>
-    <p class="text-gray-300 whitespace-pre-line">{{ post.content | cutLongText : 50 : true }}</p>
+  <div (click)="navigateToDetails()">
+    <div class="mb-4">
+      <h2 class="text-xl font-bold text-white mb-2">{{ post.title }}</h2>
+      <p class="text-gray-300 whitespace-pre-line">{{ post.content | cutLongText : 150 : true }}</p>
+    </div>
   </div>
 
   <!-- Image -->
   @if (post.image) {
-  <div class="mb-4 rounded-xl overflow-hidden">
-    <img [src]="post.image" [alt]="post.title" class="w-full object-cover max-h-96" />
+  <div class="mb-4 overflow-hidden">
+    <img [src]="post.image" [alt]="post.title" class="w-full object-cover max-h-72" />
   </div>
   }
 
@@ -65,7 +67,7 @@
   <!-- Actions -->
   <div class="flex items-center justify-between pt-4 border-t border-white/10">
     <button
-      (click)="onLike()"
+      (click)="onLike($event)"
       [class.text-red-500]="post.isLikedByMe"
       class="flex items-center space-x-2 hover:text-red-400 transition-colors group"
     >
@@ -87,7 +89,7 @@
     </button>
 
     <button
-      (click)="onViewComments()"
+      (click)="onViewComments($event)"
       class="flex items-center space-x-2 hover:text-blue-400 transition-colors"
     >
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,4 +115,28 @@
       <span class="font-semibold">{{ post.repostsCount }}</span>
     </button>
   </div>
+
+  @if(showComments()){
+  <div class="bg-black/20 rounded-xl p-3 mt-2 border border-white/5">
+    <app-comment-form [isSubmitting]="isSubmitting()" (submitComment)="onCommentSubmit($event)">
+    </app-comment-form>
+    <app-comment-list
+      [comments]="comments()"
+      [currentUserId]="currentUserId"
+      [isAdmin]="isAdmin"
+      (deleteComment)="onDeleteComment($event)"
+      (updateComment)="handleUpdateComment($event)"
+      >></app-comment-list
+    >
+
+    @if (post.commentsCount > 3) {
+    <button
+      (click)="navigateToDetails()"
+      class="w-full text-xs text-center text-gray-500 hover:text-amber-400 py-2 mt-1 border-t border-white/5 transition-colors"
+    >
+      Ver los {{ post.commentsCount }} comentarios
+    </button>
+    }
+  </div>
+  }  
 </article>

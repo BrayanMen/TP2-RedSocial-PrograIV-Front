@@ -1,1 +1,63 @@
-<p>comment-form works!</p>
+<div class="flex gap-3 items-center py-2 border-b border-white/10">
+  <input
+    type="text"
+    [disabled]="isSubmitting"
+    [ngModel]="content()"
+    (ngModelChange)="content.set($event)"
+    (keydown.enter)="handleSubmit()"
+    (keydown.escape)="onCancel()"
+    [placeholder]="placeholder"
+    class="bg-white/5 border border-white/10 rounded-full px-3 py-2 text-sm text-white w-full focus:outline-none focus:border-amber-400/50 transition-colors placeholder-gray-500 disabled:opacity-50"
+  />
+  @if(initialValue){
+  <button (click)="onCancel()" class="text-gray-400 hover:text-red-800/30 p-2">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M6 18L18 6M6 6l12 12"
+      />
+    </svg>
+  </button>
+  }
+
+  <button
+    (click)="handleSubmit()"
+    [disabled]="!content().trim() || isSubmitting"
+    class="p-2 text-amber-400 hover:bg-amber-400/10 rounded-full transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+  >
+    @if (isSubmitting) {
+    <svg
+      class="animate-spin h-5 w-5"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <circle
+        class="opacity-75"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        stroke-width="4"
+      ></circle>
+      <path
+        class="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+      ></path>
+    </svg>
+    } @else {
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z"
+      />
+    </svg>
+
+    }
+  </button>
+</div>
