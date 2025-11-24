@@ -46,7 +46,6 @@ export class AuthService {
   ) {
     if (isPlatformBrowser(this.platformId)) {
       this.initializeAuth();
-      console.log(this.checkAuth())
     }
   }
 
@@ -156,8 +155,18 @@ export class AuthService {
     this.loadingService.show();
     const formData = new FormData();
 
+    const allowedFields = [
+      'firstName',
+      'lastName',
+      'bio',
+      'principalMartialArt',
+      'principalMartialLevel',
+      'principalBeltLevel',
+      'fighterLevel',
+    ];
+
     Object.entries(user).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
+      if (allowedFields.includes(key) && value !== undefined && value !== null && value !== '') {
         formData.append(key, String(value));
       }
     });
@@ -170,11 +179,18 @@ export class AuthService {
       //Chequear ruta
       map((res) => res.data),
       tap((data) => {
-        this.currentUser.set(data);
+        this.currentUser.update((prev) => (prev ? { ...prev, ...data } : data));
+        if (data.profileImage) {
+          const timestamp = new Date().getTime();
+          const bustedUrl = data.profileImage.includes('?')
+            ? `${data.profileImage}&t=${timestamp}`
+            : `${data.profileImage}?t=${timestamp}`;
+          this.currentUser.update((u) => (u ? { ...u, profileImage: bustedUrl } : null));
+        }
       }),
       catchError((error) => {
-        const errorMessage =
-          error?.error?.message || error.message || 'Error al actualizar el perfil';
+        const errorMessage = error?.error?.error || error.message || 'Error al actualizar';
+        console.error('Error Update Profile:', error);
         return throwError(() => new Error(errorMessage));
       }),
       finalize(() => {
@@ -251,7 +267,6 @@ export class AuthService {
       throw error;
     }
   }
-  
 
   private showRefreshTokenModal(): void {
     if (this.refreshModalShow) return;
@@ -339,7 +354,7 @@ export class AuthService {
         titleMsj,
         () => {
           this.modalService.infoModal(infoTrue);
-          resolve(true); // Usuario confirmó         
+          resolve(true); // Usuario confirmó
         },
         () => {
           this.modalService.infoModal(infoFalse);

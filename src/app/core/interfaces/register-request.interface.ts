@@ -1,3 +1,5 @@
+import { UserRole } from "./user.interface";
+
 export interface IRegisterRequest {
   email: string;
   username: string;
@@ -8,4 +10,15 @@ export interface IRegisterRequest {
   birthDate: string;
   bio?: string;
   role?: string;
+}
+
+export interface ICreateUserByAdmin {
+  email: string;
+  username: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  birthDate?: string;
+  bio?: string;
+  role: UserRole;
 }

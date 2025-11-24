@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { AuthService } from '../../../core/services/auth-service';
 import { PostsService } from '../../../core/services/posts-service';
 import { Router } from '@angular/router';
@@ -7,14 +7,15 @@ import { IPost } from '../../../core/interfaces/post.interface';
 import { ILikeResponse } from '../../../core/interfaces/post-response.interface';
 import { CommonModule } from '@angular/common';
 import { PostCard } from '../../../shared/components/post-card/post-card';
+import { LoadingService } from '../../../core/services/loading-service';
 
 @Component({
   selector: 'app-profile',
-  imports: [CommonModule,PostCard],
+  imports: [CommonModule, PostCard],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })
-export class Profile {
+export class Profile implements OnInit {
   user = signal<IUser | null>(null);
   latestPosts = signal<IPost[]>([]);
   isLoading = signal<boolean>(true);
@@ -23,12 +24,12 @@ export class Profile {
   constructor(
     private authService: AuthService,
     private postsService: PostsService,
+    private loadingService: LoadingService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.loadUserProfile();
-    this.loadLatestPosts();
   }
 
   loadUserProfile(): void {
@@ -36,13 +37,13 @@ export class Profile {
     if (currentUser) {
       this.user.set(currentUser);
       this.isLoading.set(false);
+      this.loadLatestPosts(currentUser.id);
+    } else {
+      this.isLoading.set(false);
     }
   }
 
-  loadLatestPosts(): void {
-    const userId = this.user()?.id;
-    if (!userId) return;
-
+  loadLatestPosts(userId: string): void {
     this.postsLoading.set(true);
     this.postsService.getLastPost(userId).subscribe({
       next: (posts: IPost[]) => {
@@ -54,6 +55,24 @@ export class Profile {
         this.postsLoading.set(false);
       },
     });
+  }
+
+  onFileSelected(e: Event) {
+    const input = e.target as HTMLInputElement;
+
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      const currentUser = this.user();
+      if (currentUser) {
+        this.authService.updateProfile(currentUser, file).subscribe({
+          next: (updated) => {
+            this.user.set(updated);
+          },
+          error: (err) => console.error('Error al subir la imagen: ', err),
+        });
+      }
+    }
+    input.value = '';
   }
 
   editProfile(): void {
@@ -109,6 +128,4 @@ export class Profile {
       error: (error) => console.error('Error:', error),
     });
   }
-
-
 }

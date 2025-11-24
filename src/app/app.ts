@@ -23,8 +23,6 @@ export class App {
 
   constructor(private authService: AuthService, private loadService: LoadingService) {  
     this.isLoading = this.loadService.loading$;
-    console.log('App iniciada - Estado autenticación:', this.authService.isAuthenticated());
-    console.log('Usuario actual:', this.authService.currentUser());
   }
 
   handleSplashComplete() {

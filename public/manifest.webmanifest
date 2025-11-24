@@ -1,9 +1,11 @@
 {
-  "name": "social-network-tp2-front",
-  "short_name": "social-network-tp2-front",
+  "name": "Oss! Social Network",
+  "short_name": "Oss!",
+  "theme_color": "#fbbf24",
+  "background_color": "#10100e",
   "display": "standalone",
-  "scope": "./",
-  "start_url": "./",
+  "scope": "/",
+  "start_url": "/",
   "icons": [
     {
       "src": "icons/android-icon-36x36.png",

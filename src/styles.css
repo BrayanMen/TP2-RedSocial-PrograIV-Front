@@ -45,3 +45,47 @@ body {
   --gray-1: #4b4b4bff;
   --gray-2: #c2c4c3ff;
 }
+
+@layer utilities {
+  /* Animación: Entrada suave desde arriba */
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translate3d(0, -20px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  .animate-fade-in-down {
+    animation: fadeInDown 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+
+  /* Animación: Entrada suave desde abajo (usada en comentarios) */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 20px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+  
+  /* Animación: Pulso suave para estados de carga */
+  @keyframes softPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+  
+  .animate-soft-pulse {
+    animation: softPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+}
