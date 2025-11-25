@@ -9,6 +9,7 @@ import {
   PLATFORM_ID,
   EventEmitter,
   Output,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { IComment } from '../../../../core/interfaces/comment.interface';
@@ -19,6 +20,7 @@ import gsap from 'gsap';
   selector: 'app-comment-list',
   standalone: true,
   imports: [CommonModule, CommentItem],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './comment-list.html',
 })
 export class CommentList implements OnChanges {

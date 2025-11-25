@@ -1,7 +1,7 @@
-import { Component, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
 import { IPost } from '../../../core/interfaces/post.interface';
 import { Router, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
 import { CutLongTextPipe } from '../../pipes/cut-long-text.pipe';
 import { IComment } from '../../../core/interfaces/comment.interface';
@@ -21,7 +21,9 @@ import { CommentForm } from '../comments/comment-form/comment-form';
     CutLongTextPipe,
     CommentList,
     CommentForm,
+    NgOptimizedImage,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './post-card.html',
   styleUrl: './post-card.css',
 })

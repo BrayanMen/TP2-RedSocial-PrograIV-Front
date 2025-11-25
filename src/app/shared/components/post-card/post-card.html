@@ -1,5 +1,5 @@
 <article
-  class="bg-white/10 backdrop-blur-xl rounded-b-4xl border mt-2 border-red-800/50 p-6 hover:shadow-xl hover:shadow-amber-400/10 transition-all duration-300"
+  class="bg-white/10 backdrop-blur-xl rounded-b-4xl border mt-2 border-red-800/50 p-6 hover:shadow-xl hover:shadow-amber-400/10 transition-all duration-300 w-[400px] md:w-[600px]" 
 >
   <!-- Header -->
   <div class="flex items-start justify-between mb-4">
@@ -51,7 +51,13 @@
   <!-- Image -->
   @if (post.image) {
   <div class="mb-4 overflow-hidden">
-    <img [src]="post.image" [alt]="post.title" class="w-full object-cover max-h-72" />
+    <img
+      [ngSrc]="post.image"
+      [width]="500"
+      [height]="300"
+      [alt]="post.title"
+      class="w-full object-contain max-h-72"
+    />
   </div>
   }
 
@@ -138,5 +144,5 @@
     </button>
     }
   </div>
-  }  
+  }
 </article>

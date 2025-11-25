@@ -1,5 +1,5 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { inject, Injector } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth-service';
 import { environment } from '../../../environments/environment';
@@ -10,7 +10,7 @@ const refreshTokenSubject = new BehaviorSubject<string | null>(null);
 const authUrl = 'auth/';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const authService = inject(AuthService);
+  const injector = inject(Injector)
   const router = inject(Router);
   const apiUrl = environment.apiUrl;
   //Si la peticion no va a la api pasa de largo
@@ -23,6 +23,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   });
   return next(reqWithCredentials).pipe(
     catchError((error) => {
+      const authService = injector.get(AuthService)
       const isAuthRoute =
         req.url.includes(`${authUrl}login`) ||
         req.url.includes(`${authUrl}register`) ||

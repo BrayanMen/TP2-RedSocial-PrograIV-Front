@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform, SecurityContext } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Pipe({
@@ -9,8 +9,11 @@ export class HighlightPipe implements PipeTransform {
   constructor(private sanitizer: DomSanitizer) {}
 
   transform(value: string, searchTerm: string): SafeHtml {
-    if (!value || !searchTerm) {
-      return value;
+    if (!value) return '';
+    const sanitizedValue = this.sanitizer.sanitize(SecurityContext.HTML, value) || '';
+
+    if (!searchTerm) {
+      return this.sanitizer.bypassSecurityTrustHtml(sanitizedValue);
     }
 
     const regex = new RegExp(searchTerm, 'gi');

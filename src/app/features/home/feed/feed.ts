@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import {
   ILikeResponse,
   IPostsResponse,
@@ -6,7 +6,7 @@ import {
   SortBy,
 } from '../../../core/interfaces/post-response.interface';
 import { IPost, PostType } from '../../../core/interfaces/post.interface';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { PostCard } from '../../../shared/components/post-card/post-card';
 import { PostsService } from '../../../core/services/posts-service';
 import { AuthService } from '../../../core/services/auth-service';
@@ -19,6 +19,7 @@ import { IComment } from '../../../core/interfaces/comment.interface';
 @Component({
   selector: 'app-feed',
   imports: [CommonModule, PostCard, FormsModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './feed.html',
   styleUrl: './feed.css',
 })
@@ -34,10 +35,10 @@ export class Feed implements OnInit {
   totalPages = signal<number>(1);
   sortBy = signal<SortBy>(SortBy.DATE);
   readonly SortBy = SortBy;
-  
+
   currentUserId = signal<string | undefined>(undefined);
   isAdmin = signal<boolean>(false);
-  
+
   showCreateModal = signal<boolean>(false);
   newPostTitle = signal<string>('');
   newPostContent = signal<string>('');
@@ -72,7 +73,7 @@ export class Feed implements OnInit {
         this.isLoading.set(false);
       },
       error: (error: any) => {
-        this.errorMessage.set(error.message || 'Error al cargar publicaciones'); 
+        this.errorMessage.set(error.message || 'Error al cargar publicaciones');
         this.isLoading.set(false);
       },
     });
@@ -236,5 +237,4 @@ export class Feed implements OnInit {
       },
     });
   }
-  
 }

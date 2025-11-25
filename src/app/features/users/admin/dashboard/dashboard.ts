@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   computed,
   ElementRef,
@@ -22,6 +23,7 @@ import Chart from 'chart.js/auto';
 @Component({
   selector: 'app-dashboard',
   imports: [RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })

@@ -1,7 +1,7 @@
-import { Component, computed, effect, HostListener, inject, signal } from '@angular/core';
+import { Component, computed, effect, HostListener, inject, PLATFORM_ID, signal } from '@angular/core';
 import { AuthService } from '../../../../core/services/auth-service';
 import { IUser } from '../../../../core/interfaces/user.interface';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
@@ -13,6 +13,8 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 export class Navbar {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private platformId = inject(PLATFORM_ID);
+  private isBrowser = signal(false);
 
   isLogin = signal<boolean>(false);
   showMenu = signal<boolean>(false);
@@ -22,6 +24,7 @@ export class Navbar {
   isAdmin = computed(()=> this.authService.isAdmin())
 
   constructor() {
+    this.isBrowser.set(isPlatformBrowser(this.platformId));
     effect(() => {
       const user = this.authService.currentUser();
       if (user) {
@@ -70,6 +73,7 @@ export class Navbar {
 
   @HostListener('window:resize', [])
   onResize() {
+    if (!this.isBrowser()) return;
     if (window.innerWidth > 1000) {
       this.showMenu.set(false);
     }

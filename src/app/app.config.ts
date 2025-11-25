@@ -20,7 +20,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding()),
     provideClientHydration(withEventReplay()),
     provideHttpClient(withFetch(), 
-    // withInterceptors([authInterceptor, errorInterceptor])
+    withInterceptors([authInterceptor, errorInterceptor])
   ),
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),

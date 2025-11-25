@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IComment } from '../../../../core/interfaces/comment.interface';
 import { TimeAgoPipe } from '../../../pipes/time-ago.pipe';
@@ -7,6 +7,7 @@ import { CommentForm } from '../comment-form/comment-form';
   selector: 'app-comment-item',
   standalone: true,
   imports: [CommonModule, TimeAgoPipe, CommentForm],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './comment-item.html',
 })
 export class CommentItem {
